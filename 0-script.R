@@ -12,6 +12,7 @@ library(tidyverse)
 library(xlsx)
 # install.packages("XLConnect")
 library(XLConnect)
+## java 8-11 needed
 
 ## Read Data ####
 data <- read.xlsx(file = "ebird_small.xlsx", 
