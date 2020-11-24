@@ -1,7 +1,7 @@
 ## Adam Hughes
 ## UARK VCRI
 ##
-## 2020-11-04 methods uark meeting
+## 2020-11-04 METHODS uark meeting
 ##
 ## Real Data
 ## xlsx data
@@ -22,19 +22,32 @@ colnames(ebird_data)
 View(ebird_data)
 
 ebird_data %>%
+  filter(X5 == "Mallard")
+
+ebird_data %>%
   filter(X15 == "Arkansas")
 
 unique(ebird_data$X15)
 
 ebird_data_sample <- ebird_data %>%
   mutate(ID = paste0(X31, "_", X32)) %>%
-  select(X2, ID, X30, X3, X5, X6, X33, X43, X23)
+  select(X2, ID, X30, X3, X5, X6, X9, X33, X43, X23)
+
+## filter out "X" replace with "0"
+ebird_data_sample %>% filter(X9 == "X")
+
+new <- ebird_data_sample %>% str_replace("X", "0")
+
 
 ebird_data_sample %>%
   group_by(ID) %>%
   # head(100) %>%
   summarise(freq = sum(X43)) %>%
   arrange(desc(freq)) 
+
+
+
+
 
 hist_test <- ebird_data_sample %>%
   group_by(ID) %>%
@@ -65,14 +78,22 @@ simple_data <- data %>%
 summary(data)
 
 
+## xlconnect ####
+# require(devtools)
+
+# Installs the master branch of XLConnect (= current development version)
+# install_github("miraisolutions/xlconnect")
+
+# Installs XLConnect 0.2-14
+# install_github("miraisolutions/xlconnect", ref = "0.2-14")
+
+library(rJava)
 
 # install.packages("XLConnect")
 library(XLConnect)
 ## java 8-11 needed
 
-
-
-## Connect to xlsx ####
+## Connect to xlsx ##
 
 createWorkbook(type = "xlsx")
 createSheet(wb, name = "sheet_alpha")
