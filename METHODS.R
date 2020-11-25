@@ -4,7 +4,7 @@
 
 
 download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/latest.csv", "raw_data/latest.csv", mode = "wb")
-# download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/timeseries.csv", "raw_data/timeseries.csv", mode = "wb")
+download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/timeseries.csv", "raw_data/timeseries.csv", mode = "wb")
 
 ## ANALTYSIS ####
 library(tidyverse)
