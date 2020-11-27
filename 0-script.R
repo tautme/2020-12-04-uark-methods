@@ -14,9 +14,15 @@
 # install.packages("tidyverse")
 library(tidyverse)
 
-ebird_data <- read_tsv("ebird.csv", 
+## Windows
+ebird_data <- read_csv("ebird.csv", 
                  col_names = FALSE
                  )
+
+## mac
+# ebird_data <- read_tsv("ebird.csv", 
+#                        col_names = FALSE
+# )
 
 colnames(ebird_data)
 View(ebird_data)
@@ -77,8 +83,14 @@ simple_data <- data %>%
 
 summary(data)
 
+## make xlsx ####
+head(mtcars)
+library(xlsx)
+write.xlsx(mtcars, "R_mtcars_data.xlsx", sheetName = "raw_data")
 
 ## xlconnect ####
+
+## http://www.sthda.com/english/articles/2-r/4-xlconnect-read-write-and-manipulate-microsoft-excel-files-from-within-r/
 # require(devtools)
 
 # Installs the master branch of XLConnect (= current development version)
@@ -92,29 +104,107 @@ library(rJava)
 # install.packages("XLConnect")
 library(XLConnect)
 ## java 8-11 needed
+## works on MLKG windows machine
 
 ## Connect to xlsx ##
 
-createWorkbook(type = "xlsx")
-createSheet(wb, name = "sheet_alpha")
+# createWorkbook(type = "xlsx")
+# createSheet(wb, name = "sheet_alpha")
 
-## Not run: 
+## Not run: R_mtcars_data.xlsx
 # Load workbook; create if not existing
-wb <- loadWorkbook("XLConnect.xlsx")
+#wb <- loadWorkbook("XLConnect.xlsx")
+wb <- loadWorkbook("R_mtcars_data.xlsx", create = TRUE)
 
-# Create a worksheet
-createSheet(wb, name = "mtcars")
+wb_data <- readWorksheet(wb, sheet = "raw_data")
 
-# Create a name reference
-createName(wb, name = "mtcars", formula = "mtcars!$C$5")
+createSheet(wb, "mtcars_cleaned_data")
 
-# Write built-in data.frame 'mtcars' to the specified named region
-writeNamedRegion(wb, mtcars, name = "mtcars")
+colnames(wb_data)[1] <- "MakeModel"
 
-# Save workbook
+library(tidyverse)
+
+wb_data %>% 
+  arrange(desc(mpg))
+
+wb_data <- wb_data %>%
+  mutate(mpg_by_wt = mpg * wt)
+
+wb_data <- wb_data %>%
+  arrange(desc(mpg_by_wt))
+
+colnames(wb_data)
+
+mpg_plot <- wb_data %>% ggplot(aes(x = mpg, y = mpg_by_wt)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2)) +
+  # facet_wrap(vars(cyl)) +
+  facet_wrap(~cyl)
+
+
+## https://www.r-bloggers.com/2016/03/few-steps-to-connect-r-with-excel-xlconnect-2/
+library(ggplot2)
+fileGraph <- paste(outDir,'graph.png',sep='/')
+png(filename = fileGraph, width = 1800, height = 1600)
+
+ozone.plot <- ggplot(dtAir, aes(x=Day, y=Ozone)) + 
+  geom_point() + 
+  geom_smooth()+
+  facet_wrap(~Month, nrow=1)
+print(ozone.plot)
+invisible(dev.off())
+addImage(exc2,fileGraph, 'OzonePlot',TRUE)
+saveWorkbook(exc2)library(ggplot2)
+fileGraph <- paste(outDir,'graph.png',sep='/')
+png(filename = fileGraph, width = 800, height = 600)
+ozone.plot <- ggplot(dtAir, aes(x=Day, y=Ozone)) + 
+  geom_point() + 
+  geom_smooth()+
+  facet_wrap(~Month, nrow=1)
+print(ozone.plot)
+invisible(dev.off())
+addImage(exc2,fileGraph, 'OzonePlot',TRUE)
+saveWorkbook(exc2)
+
+
+writeWorksheet(wb, wb_data, sheet = "mtcars_cleaned_data", startRow = 3, startCol = 4)
+
 saveWorkbook(wb)
 
-# clean up 
-file.remove("XLConnect.xlsx")
 
-## End(Not run)
+## plot
+
+# Create a named region called 'boxplot' referring to the sheet
+# called 'boxplot' 
+createName(wb, name = "boxplot", formula = "boxplot!$B$2")
+
+# Create R plot to a png device
+png(filename = "boxplot.png", width = 800, height = 600)
+boxplot(mpg ~ mpg_by_wt, data = wb_data, col = "lightgray")
+dev.off()
+
+# Write image to the named region created above
+library(lattice)
+addImage(wb, filename = "boxplot.png", name="boxplot", originalSize = TRUE)
+
+# Save workbook (this actually writes the file to disk)
+saveWorkbook(wb)
+
+
+
+# # Create a worksheet
+# createSheet(wb, name = "mtcars")
+# 
+# # Create a name reference
+# createName(wb, name = "mtcars", formula = "mtcars!$C$5")
+# 
+# # Write built-in data.frame 'mtcars' to the specified named region
+# writeNamedRegion(wb, mtcars, name = "mtcars")
+# 
+# # Save workbook
+# saveWorkbook(wb)
+# 
+# # clean up 
+# file.remove("XLConnect.xlsx")
+# 
+# ## End(Not run)
