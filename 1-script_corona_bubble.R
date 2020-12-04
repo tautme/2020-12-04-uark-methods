@@ -6,8 +6,8 @@
  dir.create("raw_data")
  dir.create("data")
 
-# download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/latest.csv", "raw_data/latest.csv", mode = "wb")
-# download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/timeseries.csv", "raw_data/timeseries.csv", mode = "wb")
+download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/latest.csv", "raw_data/latest.csv", mode = "wb")
+download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/timeseries.csv", "raw_data/timeseries.csv", mode = "wb")
 
 ## ANALTYSIS ####
 library(tidyverse)
@@ -436,7 +436,7 @@ data_all %>%
 data_all %>% 
   filter(state == "Louisiana") %>%
   arrange(desc(cases))
-## why does people out git NA for sum
+## why does people out get NA for sum
 data_all %>% 
   filter(state == "Louisiana") %>%
   summarise(total = sum(cases))
@@ -516,7 +516,7 @@ for(x in c(1:num)) {
 ## Examining the data shows that this radius may only work in US and China
 ## Some countries data has only one cental coordinate.
 
-## RUN LONGITUDE.R SCRIPT BEFORE RUNNING BELOW ######
+## RUN LONGITUDE.R SCRIPT BEFORE RUNNING BELOW
 
 ## add information about miles from degree longitude
 radius <- my_people %>%
@@ -741,23 +741,23 @@ num_r <- length(my_radius)
 names(data_all)
 
 outi <- data_all %>%
-  filter(    lat <= my_people$latitude[1] + my_radius[1]
-             & lat >= my_people$latitude[1] - my_radius[1]
-             & long <= my_people$longitude[1] + my_radius[1]
-             & long >= my_people$longitude[1] - my_radius[1]) %>%
+  filter(    lat <= my_people_out$latitude[1] + my_radius[1]
+             & lat >= my_people_out$latitude[1] - my_radius[1]
+             & long <= my_people_out$longitude[1] + my_radius[1]
+             & long >= my_people_out$longitude[1] - my_radius[1]) %>%
   summarise(cases = sum(cases),
             deaths = sum(deaths)) %>%
   mutate(radius = my_radius[1])
 
-my_people$name
-pep <- 12
+my_people_out$name
+# pep <- 1
 
 for(x in c(1:num_r)) {
   outi[x, ] <- data_all %>%
-    filter(    lat <= my_people$latitude[pep] + my_radius[x]
-               & lat >= my_people$latitude[pep] - my_radius[x]
-               & long <= my_people$longitude[pep] + my_radius[x]
-               & long >= my_people$longitude[pep] - my_radius[x]) %>% 
+    filter(    lat <= my_people_out$latitude[pep] + my_radius[x]
+               & lat >= my_people_out$latitude[pep] - my_radius[x]
+               & long <= my_people_out$longitude[pep] + my_radius[x]
+               & long >= my_people_out$longitude[pep] - my_radius[x]) %>% 
     summarise(cases = sum(cases, na.rm = TRUE),
               deaths = sum(deaths, na.rm = TRUE)) %>%
     mutate(radius = my_radius[x])
@@ -768,10 +768,10 @@ for(x in c(1:num_r)) {
 outi %>%
   ggplot(aes(x = radius, y = cases)) +
     geom_line() +
-    ggtitle(paste0("Estimate COVID-19 around ", my_people$city[pep], ", ", 
-                  my_people$region[pep], 
+    ggtitle(paste0("Estimate COVID-19 around ", my_people_out$city[pep], ", ", 
+                  my_people_out$region[pep], 
                   # " -- (Longitude, Latitude) --", 
-                  " (", my_people$longitude[pep], ", ", my_people$latitude[pep], 
+                  " (", my_people_out$longitude[pep], ", ", my_people_out$latitude[pep], 
                   ")")) +
     xlab("Degrees Longitude & Latitude Away") +
     annotate("text", x = 1.5, y = 300, 
@@ -782,7 +782,7 @@ Sys.Date()
 
 ## add information about miles from degree longitude
 radiusi <- my_radius %>% tibble() %>%
-  mutate(lon_miles = my_radius * latlongdeg2mile(my_people$latitude[1], my_people$longitude[1]),
+  mutate(lon_miles = my_radius * latlongdeg2mile(my_people_out$latitude[1], my_people_out$longitude[1]),
          lat_miles = my_radius * round(circumference / 360, 2))
 names(radiusi)[1] <- "radius"
 
@@ -791,15 +791,49 @@ my_radius_outi <- merge(radiusi, outi, by = "radius", all = TRUE) %>%
 
 write_csv(my_radius_outi, paste0("data/", 
                                  format(Sys.time(), "%Y%m%d%H%M"), 
-                                 "_", my_people$city[pep], "_radius_cds_daily.csv"))
+                                 "_", my_people_out$city[pep], "_radius_cds_daily.csv"))
 
 
-paste0("Estimate COVID-19 around ", my_people$city[pep], ", ", 
-       my_people$region[pep], 
+paste0("Estimate COVID-19 around ", my_people_out$city[pep], ", ", 
+       my_people_out$region[pep], 
        # " -- (Longitude, Latitude) --", 
-       " (", my_people$longitude[pep], ", ", my_people$latitude[pep], 
+       " (", my_people_out$longitude[pep], ", ", my_people_out$latitude[pep], 
        ")")
 
 format(Sys.time(), "%Y%m%d%H%M")
+
+
+
+# ## correlation #####
+# 
+# my_people_out_usa %>%
+#   drop_na() %>%
+#   select(cases_per_area:death_per_case) %>%
+#   pairs()
+#     
+# 
+# 
+# # Function to add correlation coefficients
+# panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+#   usr <- par("usr")
+#   on.exit(par(usr))
+#   par(usr = c(0, 1, 0, 1))
+#   Cor <- abs(cor(x, y)) # Remove abs function if desired
+#   txt <- paste0(prefix, format(c(Cor, 0.123456789), digits = digits)[1])
+#   if(missing(cex.cor)) {
+#     cex.cor <- 0.4 / strwidth(txt)
+#   }
+#   text(0.5, 0.5, txt,
+#        cex = 1 + cex.cor * Cor) # Resize the text by level of correlation
+# }
+# 
+# 
+# my_people_out_usa %>%
+#   drop_na() %>%
+#   select(cases_per_area:death_per_case) %>%
+#   pairs(upper.panel = panel.cor,    # Correlation panel
+#         lower.panel = panel.smooth) # Smoothed regression lines
+
+
 
 
