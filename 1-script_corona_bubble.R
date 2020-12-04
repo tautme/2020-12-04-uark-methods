@@ -6,9 +6,8 @@
  dir.create("raw_data")
  dir.create("data")
 
-
-download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/latest.csv", "raw_data/latest.csv", mode = "wb")
-download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/timeseries.csv", "raw_data/timeseries.csv", mode = "wb")
+# download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/latest.csv", "raw_data/latest.csv", mode = "wb")
+# download.file("https://liproduction-reportsbucket-bhk8fnhv1s76.s3-us-west-1.amazonaws.com/v1/latest/timeseries.csv", "raw_data/timeseries.csv", mode = "wb")
 
 ## ANALTYSIS ####
 library(tidyverse)
@@ -67,139 +66,6 @@ R <- 3959 # mean radius of Earth in miles
 circumference <- 2 * pi * R
 circumference / 360
 
-## EXPLORE 
-# 
-# ## timeseries data ####
-# time_data <- read_csv("raw_data/timeseries.csv")
-# 
-# ## are there negative counts?
-# time_data %>% names()
-# time_data$level %>% as.factor() %>% levels()
-# dim(time_data)
-# 
-# time_data$state %>% 
-#   is.na() %>% 
-#   sum()
-# 
-# time_data %>%
-#   group_by(country)
-# 
-# ## 20201117
-# locations <- read_csv("raw_data/locations.csv")
-# 
-# ## seperate name into "city, county, state"
-# time_data_usa <- time_data %>%
-#   filter(country == "United States",level == "county")
-# 
-# time_data_usa_ <- time_data_usa %>%
-#   separate(name, c("county", "state", "country"), sep = ", ")
-# ## remove space
-# 
-# time_data <- time_data_usa_
-# time_data %>%
-#   filter(state == "California")
-# 
-# 
-# ## does the timeseries csv data also have the problem of double list growthFactor
-# ## no, they are all from the spread
-# explore_complete_data <- time_data %>%
-#   select(-recovered, -active)
-# 
-# explore_complete_data %>%
-#   filter(level == "county") %>%
-#   group_by(state, date) %>%
-#   summarise(tested = sum(tested, na.rm = TRUE), 
-#             cases = sum(cases, na.rm = TRUE)) %>%
-#   filter(state == c("Arkansas")) %>%
-#     ggplot(aes(x = date, y = tested, color = state)) +
-#       geom_point(aes(x = date, y = cases))
-# 
-# ## county rollup
-# time_data %>%
-#   filter(level == "county", date > "2020-03-11") %>%
-#   group_by(state, date) %>%
-#   filter(state == c("Kansas")) %>%
-#   summarise(tested = sum(tested, na.rm = FALSE),
-#             cases = sum(cases, na.rm = FALSE)) %>%
-#   ggplot(aes(x = date, y = cases, color = state)) +
-#     geom_point() +
-#     # geom_point(aes(y = tested)) +
-#     scale_x_date(date_minor_breaks = "1 day")
-#     # scale_x_date(date_breaks = seq("2020-03-23", "2020-04-09"))
-#     
-# ## straight state
-# time_data %>%
-#   filter(level == "state", state == "Kansas", date > "2020-03-11") %>%
-#     ggplot(aes(x = date, y = cases, color = state)) +
-#       geom_point() +
-#       # geom_point(aes(y = tested)) +
-#       scale_x_date(date_minor_breaks = "1 day")
-# ## do not match | kansas mar. 19 - 22 and apr. 1
-# ## match but anomolius mar. 27 & 31
-# 
-# 
-# time_data %>%
-#   group_by(state, date) %>%
-#   summarise(tested = sum(tested, na.rm = FALSE),
-#             cases = sum(cases, na.rm = FALSE)) %>%
-#   filter(state %in% c("Kansas", "Alaska", "New Jersey", "South Dakota")) %>%
-#   ggplot(aes(x = date, y = cases, color = state)) +
-#   geom_point() +
-#   facet_grid(state ~ ., scales = "free")
-# 
-# time_data %>%
-#   group_by(state, date) %>%
-#   summarise(tested = sum(tested, na.rm = FALSE),
-#             cases = sum(cases, na.rm = FALSE)) %>%
-#   filter(state %in% c("Kansas", "Alaska", "New Jersey", "South Dakota")) %>%
-#   ggplot(aes(x = date, y = cases, color = state)) +
-#   geom_point() +
-#   facet_grid(state ~ ., scales = "free")
-# 
-# ## Check a State ###
-# format(Sys.time(), "%Y-%m-%d")
-# stime <- as.Date(Sys.time())
-# yesterday <- stime - 1
-# yesterday <- as.character(yesterday)
-# last_month <- stime - 31
-# last_month <- as.character(last_month)
-# ## do timeseries and tidy match?
-# # test <- "New Jersey"
-# # test <- "South Dakota"
-# # test <- "Alaska"
-# # test <- "Kansas"
-# test <- "California"
-# # test <- "New York"
-# 
-# ## understatnd the aggregate column, which is primarily used for mapping. 
-# timeseries_data %>% filter(country == "United States") %>% View()
-# 
-# timeseries_data %>% arrange(desc(cases)) %>% select(-deaths, -url) %>% View()
-# 
-# ## less than 5 ###
-# ## sudoku
-# time_data %>%
-#   filter(level == "county", state == "Arkansas", date == "2020-03-25") %>%
-#   view()
-# ## Arknasas started giving <5 number on April 14th
-# time_data %>%
-#   filter(level == "county", state == "Rhode Island", date == "2020-03-21") %>%
-#   view()
-# 
-# ## check random 2 3
-# test <- seq(5, 100, by = 1)
-# test <- (sample.int(101,size=100,replace=TRUE)-1)
-# a <- sum(test)
-# 
-# sample(c(1:4), size = 4, replace = F)[1]
-
-
-
-
-
-
-
-
 
 ## data_snap ####
 ## data.csv today match these?
@@ -243,21 +109,12 @@ data_snap %>%
 data_snap_county <- data_snap %>%
   filter(level == "county")
 
-explore_state <- time_data %>%
-  filter(state == "Kansas")
-
-explore_state %>%
-  group_by(date) %>%
-  filter(state == "Kansas") %>%
-  summarise(tested = sum(tested, na.rm = FALSE),
-            cases = sum(cases, na.rm = FALSE))
-
 data_snap %>%
   filter(level == "county", state == test) %>%
   summarise(total = sum(cases))
 
 data_snap %>%
-  filter(level == "state", state == test) %>%
+  filter(level == "state", state ==  "Arkansas") %>%
   summarise(total = sum(cases))
 
 ## county 
@@ -308,7 +165,7 @@ data_snap %>%
 ## state
 
 data_snap %>%
-  filter(level == "state", state == test) %>%
+  filter(level == "state", state == "Missouri") %>%
   select(name, cases, deaths)
 
 # max(tidy_data$date)
@@ -323,8 +180,6 @@ data_snap %>%
 #     ggplot(aes(x = date, y = value, color = type)) +
 #       geom_point() +
 #       scale_x_date(date_minor_breaks = "1 day")
-
-max(time_data$date)
 
 # time_data %>%
 #   filter(level == "state", date > "2020-03-19", state == test) %>%
@@ -378,70 +233,17 @@ data_snap %>%
   filter(state == "South Dakota", county == "Minnehaha County") %>%
   select(line, name, cases, deaths)
 
-# time_data %>% 
-#   filter(date == "2020-04-06", state == "South Dakota", county == "Minnehaha County") %>%
-#   select(name, cases, deaths)
-# 
-# ## yarn start --location "Minnehaha County, SD, USA"
-# tidy_data %>% 
-#   filter(type == "cases",
-#          date == "2020-04-05",
-#          # state == "South Dakota", 
-#          county == "Minnehaha County") %>%
-#   select(name, type, value)
-# 
-# names(tidy_data)
-# head(tidy_data)
-# explore_complete_data %>%
-#   filter(state == "FL")
-## some states have multiple reports differentiated by coordinates, no city or county.
-# mdate <- max(explore_complete_data$date)
-# explore_complete_data %>%
-#   filter(date == mdate) %>%
-#   group_by(state) %>%
-#   summarise(tested = sum(tested), cases = sum(cases)) %>% View()
-
-## cumulative crap!! this is not how humans read new news
-
-# names(data_all)
-
-## 2020 March 28 Saturday 0043
-## covid-19 cases on Earth >= 597335 JHU CSSE
-## Earth land area ~ 14894000000 m2
-## Earth -> Continent -> Country -> State -> Region -> County -> City -> Nieghborhood -> Home -> Room -> Hand -> Nose
-## 10^10 -> 10^9      -> 10^8    -> 10^7  -> 10^6   -> 10^5   -> 10^4 -> 10^3         -> 10^2 -> 10   -> 1    -> 0.1
-## ~1.5  -> America   -> USA     -> AR    -> NWA    -> Wash.  -> Fay. -> Wilson       -> C8   -> SE   -> Adam -> Breathe
-## 574430->              99447 -> 
 
 
-
-        
 ## where is Brazil?
 data_snap %>%
   filter(country == "Brazil")
-
-# ## hash Kansas
-# hash_kansas <- read_csv("/Users/adamhughes/Documents/coronadatascraper/coronadatascraper-cache/2020-4-9/9cd650122f1e65a5a95a77187448db0c.csv")
-# names(hash_kansas)
-# glimpse(hash_kansas)
-# 
-# sum(hash_kansas$Cases)
-
-## can tz have a format?
-# data_snap$tz[[58]] %>% col_time()
-#   parse_date(format = "%Z")
-#   locale(tz = "UTC")
-# col_time(format = "%Z")
-# 
-# us_central <- locale(tz = "US/Central")
-# parse_datetime("1979-10-14T1010", locale = us_central)
-
 
 ## how does the aggregate level work?
 data_snap %>%
   filter(country == "United States", 
          # aggregate == "county",
-         cases > 90000) %>% view()
+         cases > 90000)
 
 data_snap %>%
   group_by(level) %>%
@@ -452,39 +254,6 @@ data_snap$level %>% as_factor() %>% levels()
 data_snap %>% arrange(city)
 
 data_snap %>% filter(aggregate == "state") %>% arrange(desc(cases))
-
-data_snap %>% arrange(desc(cases)) %>% select(-deaths, -url, -featureId)
-
-
-## check issue # 478 ########
-## COOR AROUND 0 & 180 LONGITUDE 
-# names(data_snap)
-# glimpse(data_snap)
-# check_478 <- data_snap %>%
-#   filter(population != "NA") %>%
-#   arrange(abs(long))
-# 
-# iso1 <- read_csv("/Users/adamhughes/Documents/country-levels/coor_check.csv")
-# 
-# check_iso <- iso1$countrylevel_id
-# 
-# data_snap %>% filter(countryId %in% as_vector(check_iso), level == "country") %>%
-#   arrange(desc(population)) %>% 
-#   select(name, countryId, lat, long) %>% View()
-# 
-# data_snap %>%
-#   mutate(line_number = rownames(data_snap)) %>%
-#   select(line_number, name, cases, population, lat, long, url, aggregate, tz, deaths) %>%
-#   filter(population != "NA") %>%
-#   arrange(abs(long)) %>% View()
-# 
-#   ## USA tz in africa/algers
-# data_snap %>% 
-#   mutate(UID = rownames(data_snap)) %>%
-#   filter(country == "United States", aggregate == "state", population == 325145963) %>% View()
-
-
-
 
 
 
@@ -504,39 +273,8 @@ coordinates(dfc) <- ~longitude+latitude
 
 leaflet(dfc) %>% 
   addMarkers(popup = paste(dfc$name, "has", dfc$cases, "cases of COVID-19,", 
-                           dfc$deaths, "deaths,", dfc$tested, "tested")
-             # fillOpacity = df$deaths / 80, 
-             # radius = 5,
-             # weight = 1
-  ) %>%
-  # addCircleMarkers(map = dfa, 
-  #                  fillOpacity = dfa$deaths,
-  #                  popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
-  #                                "<p>Population: <B>", dfa$population, "</B></p>
-  #                               <p>Cases: <B>", dfa$cases, "</B></p>
-  #                               <p>Deaths: <B>", dfa$deaths, "</B></p>
-  #                               <p>DATA: <B>https://coronadatascraper.com</B></p></font>")
-  #                  ) %>%
-  # addCircleMarkers(radius = 10) %>%
-  # addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
-  #               lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
-  #               lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
-  #               lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
-  #               popup = paste("Estimate from county level data points --" , 
-  #                             "(2 degree Longitude, 2 degree Latitude square) In this", 
-  #                             my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
-  #                             my_people_out_usa$lat_miles[pep] * 2, 
-  #                             "mile tall area, there are an estimated <B>", 
-  #                             my_people_out_usa$cases[pep], 
-  #                             "</B> confirmed cases of COVID-19.", 
-  #                             "DATA:https://coronadatascraper.com")) %>%
+                           dfc$deaths, "deaths,", dfc$tested, "tested")) %>%
   addTiles()
-
-
-
-
-
-
 
 ## Explore
 
@@ -546,7 +284,10 @@ data_snap %>%
   arrange(desc(cases))
 ## CA sum row = 5550 cases
 data_snap %>% 
-  filter(country == "United States", state == "California", !is.na(county), is.na(city)) %>% 
+  filter(country == "United States", 
+         state == "California", 
+         !is.na(county), 
+         is.na(city)) %>% 
   summarise(cases = sum(cases, na.rm = TRUE))
 ## CA sum of county observations cases = 5551
 
@@ -566,11 +307,13 @@ data_snap %>% filter(level == "state")
 data_snap$level %>% as_factor() %>% levels()
 data_snap %>% filter(level == "state") %>% summarise(cases = sum(cases, na.rm = TRUE))
 ## some NA in state
-data_snap %>% filter(level == "county") %>% summarise(cases = sum(cases))
-data_snap %>% filter(level == "country") %>% summarise(cases = sum(cases))
+data_snap %>% filter(level == "county") %>% summarise(cases = sum(cases, na.rm = TRUE))
+data_snap %>% filter(level == "country") %>% summarise(cases = sum(cases, na.rm = TRUE))
 
 ## USA only
-data_snap %>% filter(country == "United States", aggregate == "state") %>% summarise(cases = sum(cases))
+data_snap %>% 
+  filter(country == "United States", aggregate == "state") %>% 
+  summarise(cases = sum(cases, na.rm = TRUE))
 
 
 ## County ####
@@ -580,8 +323,8 @@ data_snap %>% filter(country == "United States", aggregate == "state") %>% summa
 df <- data_snap %>% filter(level == "county", cases >= 1000, !is.na(lat)) %>%
   arrange(desc(cases))
 names(df)
-names(df)[13] <- "latitude"
-names(df)[14] <- "longitude"
+names(df)[9] <- "latitude"
+names(df)[10] <- "longitude"
 
 ## what about fast rate change
 # df <- time_data %>% filter(date == "2020-03-29", !is.na(lat), cases > 100)
@@ -597,7 +340,12 @@ library(leaflet)
 coordinates(df) <- ~longitude+latitude
 
 leaflet(df) %>% 
-  addCircleMarkers(popup = paste(df$county, "--", df$state, "has", df$cases, "cases of COVID-19. DATA:coronadatascraper.com", df$url)) %>%
+  addCircleMarkers(popup = paste(df$county, "--", 
+                                 df$state, 
+                                 "has", 
+                                 df$cases, 
+                                 "cases of COVID-19. DATA:coronadatascraper.com", 
+                                 df$url)) %>%
   # addCircleMarkers(radius = 10) %>%
   # addRectangles(lng1 = lng - 3,
   #               lng2 = lng + 3,
@@ -608,50 +356,14 @@ leaflet(df) %>%
   addTiles()
 
 
-## area #######
-## at state level
-library(datasets)
-
-state.area # land in square miles
-state.name
-
-area <- tibble(state.name, state.area)
-
-## time
-names(time_data)
-time_us <- time_data %>%
-  filter(country == "United States") %>%
-  filter(date == max(time_data$date)) %>%
-  filter(level == "state")
-
-names(time_us)
-names(time_us)[5] <- "state.name"
-
-time_pop_us <- merge(time_us, area, by = "state.name", all = TRUE)
-time_pop_us <- as_tibble(time_pop_us)
-## NA in area?
-time_pop_us <- time_pop_us[!is.na(time_pop_us$state.area), ]
-## Alaska NA ?
-time_pop_us <- time_pop_us[!is.na(time_pop_us$cases), ]
-tail(time_pop_us)
-max(time_pop_us$date)
-min(time_pop_us$date)
-names(time_pop_us)
-state_count_area <- time_pop_us %>%
-  mutate(d_rate_area = deaths / state.area, 
-         c_rate_area = cases / state.area,
-         r_rate_area = recovered / state.area,
-         t_rate_area = tested / state.area) %>%
-  select(-county, -date, -long, -lat, -url, tz) %>%
-  arrange(desc(c_rate_area)) 
-
-
-state_count_area <-state_count_area %>% select(name, population, cases, deaths, recovered, 
-                                               tested, state.area, d_rate_area, c_rate_area, r_rate_area, t_rate_area)
-state_count_area
-## woops! I have been summing them all along and they are already cumulative count by date
-
-write_csv(state_count_area, "data/state_case_area.csv")
+# ## area #######
+# ## at state level
+# library(datasets)
+# 
+# state.area # land in square miles
+# state.name
+# 
+# area <- tibble(state.name, state.area)
 
 ## My People ########
 ## degree buffer search area long, lat.
@@ -671,11 +383,12 @@ my_people <-
   c("NV", "FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", 
     "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN", 
     "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
-  c("Vegas", "Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", 
-    "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", 
-    "RI",  "Helwan", "Ahmed", "Ben", "Victoria", 
-    "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", 
-    "Justin", "Joshua", "Haley", "Don", "Benee"),
+  c("Virgina", "Joe", "Andy", "Nathan", "Luther", "Nancy", "Will", "George", 
+    "Jess", "David", 
+    "Charlies", "Bob", "Adam", "Gary", "Misty",  "Don",  "Cassi", "Orlando", 
+    "Rex",  "Harvey", "Arnold", "Bart", "Valarie", 
+    "Ruth",    "Ronnie", "Cary", "Pat",    "Al", "Alf", "Onita", 
+    "Jerry", "Jonathan", "Harry", "Devin", "Bonny"),
   c(-115.2, -84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, 
     -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, 
     -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    
@@ -691,31 +404,6 @@ my_people <-
 
 # names(my_people) <- c("name", "longitude", "latitude")
 num <- dim(my_people)[1]
-
-# names(data_time)
-# # ##make to run like snap_data
-# # time_snap <- data_time %>%
-# data_time <-data_time %>% select(-growthFactor)
-
-# data <- read_csv("/Users/adamhughes/Documents/coronadatascraper/dist/data.csv", col_names = TRUE,
-#         cols(
-#           name = col_character(),
-#           cases = col_double(),
-#           deaths = col_double(),
-#           recovered = col_double(),
-#           tested = col_double(),
-#           active = col_double(),
-#           population = col_double(),
-#           populationDensity = col_double(),
-#           lat = col_double(),
-#           long = col_double(),
-#           rating = col_double(),
-#           hospitalized = col_double(),
-#           publishedDate = col_character()
-#         ))
-# 
-# 
-# data_snap <- data
 
 
 names(data_snap)
@@ -935,30 +623,26 @@ leaflet(df) %>%
 ## recreate plot from JHU with square and all county counts
 
 my_people_out_usa$name
-## crap, these numbers change because the sort is set above.
-## Aidan 27
-## Baton Rouge 6
-## Bliss 7
-## Ryan 28
-## new york 23
+
 pep <- 27
+pep <- 1
 
 dfa <- data_all %>% 
   filter(country == "United States", 
          state %in% c(
-           # "Arkansas", "Louisiana", "Missouri",
-           # "Mississippi", "Oklahoma", "Texas"),
+           "Arkansas", "Louisiana", "Missouri",
+           "Mississippi", "Oklahoma", "Texas"),
                       # # # Aidan group
-                      "Rhode Island", "Connecticut", "Massachusetts",
-                      "New York", "New Hampshire", "Vermont", "Maine",
-                      "New Jersey", "Pennsylvania"),
+                      # "Rhode Island", "Connecticut", "Massachusetts",
+                      # "New York", "New Hampshire", "Vermont", "Maine",
+                      # "New Jersey", "Pennsylvania"),
                                   # "California", "Nevada", "Arizona", "Oregon"),
          # !is.na(Admin2),
          lat != 0)
 names(dfa)
 
-names(dfa)[14] <- "latitude"
-names(dfa)[15] <- "longitude"
+names(dfa)[9] <- "latitude"
+names(dfa)[10] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
@@ -1074,7 +758,7 @@ for(x in c(1:num_r)) {
                & lat >= my_people$latitude[pep] - my_radius[x]
                & long <= my_people$longitude[pep] + my_radius[x]
                & long >= my_people$longitude[pep] - my_radius[x]) %>% 
-    summarise(cases = sum(cases),
+    summarise(cases = sum(cases, na.rm = TRUE),
               deaths = sum(deaths, na.rm = TRUE)) %>%
     mutate(radius = my_radius[x])
 }
