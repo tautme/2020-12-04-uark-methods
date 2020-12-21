@@ -59,7 +59,7 @@ latlongdeg2mile <- function(lat, long){
 }
 
 
-latlongdeg2mile(lat = 0, long = -93)
+latlongdeg2mile(lat = 26, long = -93)
 
 ## Latitude 
 R <- 3959 # mean radius of Earth in miles
@@ -108,10 +108,6 @@ data_snap %>%
 ## need only county level
 data_snap_county <- data_snap %>%
   filter(level == "county")
-
-data_snap %>%
-  filter(level == "county", state == test) %>%
-  summarise(total = sum(cases))
 
 data_snap %>%
   filter(level == "state", state ==  "Arkansas") %>%
@@ -630,7 +626,7 @@ pep <- 1
 dfa <- data_all %>% 
   filter(country == "United States", 
          state %in% c(
-           "Arkansas", "Louisiana", "Missouri",
+           "Arkansas", "Louisiana", "Missouri", "Kansas",
            "Mississippi", "Oklahoma", "Texas"),
                       # # # Aidan group
                       # "Rhode Island", "Connecticut", "Massachusetts",
