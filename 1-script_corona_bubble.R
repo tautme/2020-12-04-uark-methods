@@ -93,7 +93,7 @@ names(data_snap)
 unique(data_snap$level)
 
 data_snap %>%
-  filter(level == "state", state == "Kansas") %>%
+  filter(level == "state", state == "Arkansas") %>%
   select(cases)
 
 data_snap %>%
@@ -161,7 +161,7 @@ data_snap %>%
 ## state
 
 data_snap %>%
-  filter(level == "state", state == "Missouri") %>%
+  filter(level == "state", state == "Arkansas") %>%
   select(name, cases, deaths)
 
 # max(tidy_data$date)
@@ -724,7 +724,9 @@ leaflet(dfa) %>%
 #                            df$Last_Update, ". DATA: JHU-CSSE"))
                    
 
-
+my_people_out_usa %>%
+  arrange(desc(cases_per_area)) %>%
+  select(city, cases, deaths, cases_per_area, true_morbidity)
 
 
 
